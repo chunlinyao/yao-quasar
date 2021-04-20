@@ -1,0 +1,111 @@
+/*
+ * This software is in the public domain under CC0 1.0 Universal plus a
+ * Grant of Patent License.
+ *
+ * To the extent possible under law, the author(s) have dedicated all
+ * copyright and related and neighboring rights to this software to the
+ * public domain worldwide. This software is distributed without any
+ * warranty.
+ *
+ * You should have received a copy of the CC0 Public Domain Dedication
+ * along with this software (see the LICENSE.md file). If not, see
+ * <http://creativecommons.org/publicdomain/zero/1.0/>.
+ */
+
+import java.nio.charset.StandardCharsets
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies { classpath 'com.github.ben-manes:gradle-versions-plugin:0.28.0' }
+}
+
+/* gradle.js plugin getting warning with Gradle 5+, incompatible with Gradle 6:
+
+   Internal API constructor FactoryNamedDomainObjectContainerConstructor AbstractNamedDomainObjectContainer(Class<T>, Instantiator)
+   has been deprecated. This is scheduled to be removed in Gradle 6.0. Don't use internal API
+
+   see https://github.com/eriwen/gradle-js-plugin/issues/168
+ */
+plugins {
+    id "com.eriwen.gradle.js" version "2.14.1"
+}
+
+apply plugin: 'com.github.ben-manes.versions'
+dependencyUpdates.resolutionStrategy = { componentSelection { rules -> rules.all { ComponentSelection selection ->
+    boolean rejected = ['alpha', 'beta', 'rc', 'cr', 'm', 'b'].any { qualifier -> selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-].*/ }
+    if (rejected) selection.reject('Release candidate')
+} } }
+
+def staticPath = "screen/customstatic"
+def libsPath = staticPath + "/libs"
+
+def jsdelivrBase = "https://cdn.jsdelivr.net/npm/"
+def jsdelivrList = ["quasar@1.15.10/dist/quasar.min.css", "quasar@1.15.10/dist/quasar.umd.min.js", "quasar@1.15.10/dist/lang/zh-hans.umd.min.js"]
+def fontsBase = "https://fonts.googleapis.com/"
+def fontsMap = [webfont: "css?family=Roboto:100,300,400,500,700,900|Material+Icons"]
+
+String getTargetPath(String sourcePath, String targetPath) {
+    if (!targetPath) {
+        String[] sourceSplit = sourcePath.split("/")
+        targetPath = sourceSplit[0] + '/' + sourceSplit[2..sourceSplit.length-1].join('/')
+    }
+    return targetPath
+}
+task downloadFiles { doLast {
+    for (def fontEntry in fontsMap.entrySet()) {
+        def fontName = fontEntry.key
+        def fontParam = fontEntry.value
+        String libDir = fontName
+        String targetPath = libDir + '/font.css'
+        File targetFile = file(libsPath + '/' + targetPath)
+        if (targetFile.exists()) continue
+        String sourceUrl = fontsBase + fontParam
+        logger.lifecycle("Downloading ${sourceUrl} to ${targetFile.absolutePath}")
+        targetFile.getParentFile().mkdirs()
+        def cssContent = sourceUrl.toURL().getText([requestProperties:['User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36']], "UTF-8")
+        def fontUrls = cssContent.findAll(/(https?:\/\/[^)]+)/)
+        logger.lifecycle("Downloading fonts ${fontUrls}")
+        for (def fontUrl in fontUrls) {
+            String[] sourceSplit = fontUrl.split("/")
+            String fontTargetPath = libDir + '/' + sourceSplit[sourceSplit.length-1]
+            File fontTargetFile = file(libsPath + '/' + fontTargetPath)
+            if (fontTargetFile.exists()) continue
+            logger.lifecycle("Downloading ${fontUrl} to ${fontTargetFile.absolutePath}")
+            fontTargetFile.getParentFile().mkdirs()
+            ant.get(src: fontUrl, dest: fontTargetFile)
+            cssContent = cssContent.replaceAll(fontUrl, sourceSplit[sourceSplit.length-1])
+        }
+        targetFile.write(cssContent)
+    }
+    for (String jsdPath in jsdelivrList) {
+        String[] sourceSplit = jsdPath.split("/")
+        String libDir = sourceSplit[0].substring(0, sourceSplit[0].indexOf("@"))
+        String targetPath = libDir + '/' + sourceSplit[sourceSplit.length-1]
+
+        File targetFile = file(libsPath + '/' + targetPath)
+        if (targetFile.exists()) continue
+
+        String sourceUrl = jsdelivrBase + jsdPath
+        logger.lifecycle("Downloading ${sourceUrl} to ${targetFile.absolutePath}")
+        targetFile.getParentFile().mkdirs()
+        ant.get(src: sourceUrl, dest: targetFile)
+    }
+} }
+
+task minifyWebrootVueQvt(type: com.eriwen.gradle.js.tasks.MinifyJsTask) {
+    source = file("${staticPath}/js/WebrootVue.qvt.js")
+    dest = file("${staticPath}/js/WebrootVue.qvt.min.js")
+    closure { compilerOptions.setOutputCharset(StandardCharsets.UTF_8) }
+}
+
+task clean { doLast { delete fileTree(dir: "${staticPath}/js", include: '*.min.js') }}
+task build {
+    dependsOn downloadFiles
+    dependsOn minifyWebrootVueQvt
+}
+task cleanAll { doLast {
+    delete file(libsPath)
+} }
