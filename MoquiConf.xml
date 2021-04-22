@@ -3,7 +3,7 @@
 <moqui-conf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/moqui-conf-2.1.xsd">
     <screen-facade>
         <screen-text-output type="csv" mime-type="text/csv" always-standalone="true" macro-template-location="component://yao-quasar/template/screen-macro/YaoScreenMacros.csv.ftl" />
-        <screen-text-output type="qvt" macro-template-location="component://yao-quasar/template/screen-macro/YaoScreenMacros.qvt.ftl" />
+<!--        <screen-text-output type="qvt" macro-template-location="component://yao-quasar/template/screen-macro/YaoScreenMacros.qvt.ftl" />-->
         <screen location="component://webroot/screen/webroot.xml" default-subscreen="capps">
             <subscreens-item name="capps" menu-include="false" location="component://yao-quasar/screen/capps.xml"/>
             <subscreens-item name="custom" menu-include="false" location="component://yao-quasar/screen/custom.xml"/>
