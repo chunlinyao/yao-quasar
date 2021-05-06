@@ -15,7 +15,7 @@ along with this software (see the LICENSE.md file). If not, see
     <input type="hidden" id="confMoquiSessionToken" value="${ec.web.sessionToken}">
     <input type="hidden" id="confAppHost" value="${ec.web.getHostName(true)}">
     <input type="hidden" id="confAppRootPath" value="${ec.web.servletContext.contextPath}">
-    <input type="hidden" id="confBasePath" value="${ec.web.servletContext.contextPath}/custom">
+    <input type="hidden" id="confBasePath" value="${ec.web.servletContext.contextPath}/${capps_root_app_path}">
     <input type="hidden" id="confLinkBasePath" value="${ec.web.servletContext.contextPath}/capps">
     <input type="hidden" id="confUserId" value="${ec.user.userId!''}">
     <input type="hidden" id="confLocale" value="${ec.user.locale.toLanguageTag()}">
