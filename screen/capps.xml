@@ -17,7 +17,7 @@ along with this software (see the LICENSE.md file). If not, see
     <!-- NOTE: require-authentication=false so no permission required but in pre-actions if no user logged in goes to login screen -->
     <always-actions>
         <set field="capps_root_app" from="ec.user.getPreference('capps.root.app') ?: 'component://yao-quasar/screen/custom.xml'"/>
-        <set field="capps_root_app_path" value="ec.user.getPreference('capps.root.app.path') ?: '/custom'"/>
+        <set field="capps_root_app_path" from="ec.user.getPreference('capps.root.app.path') ?: '/custom'"/>
     </always-actions>
     <pre-actions><script><![CDATA[
         // if user not logged in save current path and params then redirect to Login

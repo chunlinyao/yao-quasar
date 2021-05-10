@@ -56,8 +56,6 @@ along with this software (see the LICENSE.md file). If not, see
         <resourceValue><![CDATA[<div class="col-md-6 text-center q-px-md"><a class="text-grey-1" href="/capps/ScreenTree">${ec.l10n.localize('Site Map')}</a></div>]]></resourceValue>
     </moqui.screen.ScreenThemeResource>
 
-
-
     <moqui.screen.ScreenThemeResource screenThemeId="DEFAULT_YAO_QUASAR" sequenceNum="125" resourceTypeEnumId="STRT_HEADER_NAVBAR_COMP"
                                       resourceValue="/ssstatic/lib/QuickSearch.qvue"/>
     <moqui.screen.ScreenThemeResource screenThemeId="DEFAULT_YAO_QUASAR" sequenceNum="130" resourceTypeEnumId="STRT_HEADER_NAVBAR_COMP"
