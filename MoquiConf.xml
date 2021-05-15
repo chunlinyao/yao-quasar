@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- No copyright or license for configuration file, details here are not considered a creative work. -->
 <moqui-conf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/moqui-conf-2.1.xsd">
+    <webapp-list>
+        <webapp name="webroot">
+            <error-screen error="unauthorized" screen-path="custom/error/Unauthorized"/>
+            <error-screen error="forbidden" screen-path="custom/error/Forbidden"/>
+            <error-screen error="not-found" screen-path="custom/error/NotFound"/>
+            <error-screen error="too-many" screen-path="custom/error/TooMany"/>
+            <error-screen error="internal-error" screen-path="custom/error/InternalError"/>
+        </webapp>
+    </webapp-list>
     <screen-facade>
         <screen-text-output type="csv" mime-type="text/csv" always-standalone="true" macro-template-location="component://yao-quasar/template/screen-macro/YaoScreenMacros.csv.ftl" />
 <!--        <screen-text-output type="qvt" macro-template-location="component://yao-quasar/template/screen-macro/YaoScreenMacros.qvt.ftl" />-->
