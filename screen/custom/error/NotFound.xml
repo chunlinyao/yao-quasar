@@ -19,18 +19,18 @@ along with this software (see the LICENSE.md file). If not, see
         <render-mode><text type="html"><![CDATA[
             <p>&nbsp;</p>
             <div class="jumbotron">
-                <h1><i class="fa fa-link text-danger"></i> Page Not Found (${errorCode})</h1>
+                <h1><i class="fa fa-link text-danger"></i> 页面找不到 (${errorCode})</h1>
                 <#if errorThrowable??>
                     <#-- should always be a ScreenResourceNotFoundException -->
-                    <p class="text-danger">Could not find <code>${(errorThrowable.pathFromLastScreen!"")?html}</code>
-                        <#if errorThrowable.lastSd??>under ${errorThrowable.lastSd.getDefaultMenuName()}</#if>.</p>
-                    <p class="text-danger">The full path was: <#list errorThrowable.fullPathNameList as pathName><code>${pathName?html}</code><#if pathName_has_next>/</#if></#list></p>
-                    <#if errorThrowable.resourceLocation??><p class="text-danger">Resource not found at: ${errorThrowable.resourceLocation?html}</p></#if>
+                    <p class="text-danger"><#if errorThrowable.lastSd??>在 ${errorThrowable.lastSd.getDefaultMenuName()} 下</#if>无法找到请求的页面 <code>${errorThrowable.pathFromLastScreen}</code>
+                        。</p>
+                    <p class="text-danger">路径: <#list errorThrowable.fullPathNameList as pathName><code>${pathName}</code><#if pathName_has_next>/</#if></#list></p>
+                    <#if errorThrowable.resourceLocation??><p class="text-danger">资源: ${errorThrowable.resourceLocation}</p></#if>
                 <#else>
-                    <p class="text-danger">${errorMessage!""}</p>
+                    <p class="text-danger">${(errorMessage!"")?html}</p>
                 </#if>
-                <a href="${sri.buildUrl("/").url}" class="btn btn-primary btn-lg" role="button">Go Home</a>
-                <a href="javascript:window.history.back();" class="btn btn-primary btn-lg" role="button">Go Back</a>
+                <a href="${sri.buildUrl("/").url}" class="btn btn-primary btn-lg" role="button">返回首页</a>
+                <a href="javascript:window.history.back();" class="btn btn-primary btn-lg" role="button">后退</a>
             </div>
         ]]></text></render-mode>
     </widgets>

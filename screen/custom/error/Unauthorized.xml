@@ -19,11 +19,11 @@ along with this software (see the LICENSE.md file). If not, see
         <render-mode><text type="html"><![CDATA[
             <p>&nbsp;</p>
             <div class="jumbotron">
-                <h1><i class="fa fa-user text-danger"></i> Login Required (${errorCode})</h1>
+                <h1><i class="fa fa-user text-danger"></i> 需要登录 (${errorCode})</h1>
                 <p class="text-danger">${(errorMessage!"")?html}</p>
-                <a href="${sri.buildUrl("/").url}" class="btn btn-primary btn-lg" role="button">Go Home</a>
-                <a href="javascript:window.history.back();" class="btn btn-primary btn-lg" role="button">Go Back</a>
-                <a href="${sri.buildUrl("/Login").url}" class="btn btn-primary btn-lg" role="button">Login</a>
+                <a href="${sri.buildUrl("/").url}" class="btn btn-primary btn-lg" role="button">返回首页</a>
+                <a href="javascript:window.history.back();" class="btn btn-primary btn-lg" role="button">后退</a>
+                <a href="${sri.buildUrl("/Login").url}" class="btn btn-primary btn-lg" role="button">登录</a>
             </div>
         ]]></text></render-mode>
     </widgets>

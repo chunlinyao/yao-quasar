@@ -19,11 +19,11 @@ along with this software (see the LICENSE.md file). If not, see
         <render-mode><text type="html"><![CDATA[
             <p>&nbsp;</p>
             <div class="jumbotron">
-                <h1><i class="fa fa-exclamation-circle text-danger"></i> Internal Server Error (${errorCode})</h1>
+                <h1><i class="fa fa-exclamation-circle text-danger"></i> 程序内部错误 (${errorCode})</h1>
                 <p class="text-danger">${errorMessage!""}</p>
-                <a href="${sri.buildUrl("/").url}" class="btn btn-primary btn-lg" role="button">Go Home</a>
-                <a href="javascript:window.history.back();" class="btn btn-primary btn-lg" role="button">Go Back</a>
-                <#if errorThrowable??><button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#ErrorDetailModal">See Detail</button></#if>
+                <a href="${sri.buildUrl("/").url}" class="btn btn-primary btn-lg" role="button">返回首页</a>
+                <a href="javascript:window.history.back();" class="btn btn-primary btn-lg" role="button">后退</a>
+                <#if errorThrowable??><button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#ErrorDetailModal">详情</button></#if>
             </div>
             <#if errorThrowable??>
                 <#assign stackList = errorThrowable.getStackTrace()>
@@ -31,7 +31,7 @@ along with this software (see the LICENSE.md file). If not, see
                   <div class="modal-dialog modal-lg"><div class="modal-content">
                       <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Error Detail</h4>
+                        <h4 class="modal-title">错误详情</h4>
                       </div>
                       <div class="modal-body">
 <pre>
