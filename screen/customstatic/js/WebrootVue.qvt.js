@@ -376,7 +376,7 @@ Vue.component('m-dialog', {
                 '<h5 class="q-pl-sm non-selectable">{{title}}</h5><q-space></q-space>' +
                 '<q-btn icon="close" flat round dense v-close-popup></q-btn>' +
             '</q-card-actions><q-separator></q-separator>' +
-            '<q-card-section style="max-height: 80vh" class="scroll" ref="dialogBody"><slot></slot></q-card-section>' +
+            '<q-card-section ref="dialogBody"><slot></slot></q-card-section>' +
         '</q-card>' +
     '</q-dialog>',
     methods: {
@@ -1219,7 +1219,7 @@ Vue.component('m-date-time', {
     // NOTE: tried :fill-mask="formatVal" but results in all Y, only supports single character for mask placeholder... how to show more helpful date mask?
     // TODO: add back @focus="focusDate" @blur="blurDate" IFF needed given different mask/etc behavior
     '<q-input dense outlined stack-label :label="label" v-bind:value="value" v-on:input="$emit(\'input\', $event)" :rules="rules"' +
-            ' :mask="inputMask" fill-mask :id="id" :name="name" :form="form" :disable="disable" :size="sizeVal" >' +
+            ' :mask="inputMask" fill-mask :id="id" :name="name" :form="form" :disable="disable" :size="sizeVal" style="max-width:max-content;">' +
         '<template v-slot:prepend v-if="type==\'date\' || type==\'date-time\' || !type">' +
             '<q-icon name="event" class="cursor-pointer">' +
                 '<q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">' +
@@ -1333,7 +1333,7 @@ Vue.component('m-date-period', {
         '</m-date-time>' +
     '</div>' +
     '<div v-else class="row"><q-input dense outlined stack-label :label="label" v-model="fields[name+\'_pdate\']"' +
-            ' mask="####-##-##" fill-mask :id="id" :name="name+\'_pdate\'" :form="form" >' +
+            ' mask="####-##-##" fill-mask :id="id" :name="name+\'_pdate\'" :form="form" style="max-width:max-content;">' +
         '<q-tooltip v-if="tooltip">{{tooltip}}</q-tooltip>' +
         '<template v-slot:before>' +
             '<q-select class="q-pr-xs" dense outlined options-dense emit-value map-options v-model="fields[name+\'_poffset\']" :name="name+\'_poffset\'"' +
