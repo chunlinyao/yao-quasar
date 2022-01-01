@@ -1373,7 +1373,7 @@ Vue.component('m-display', {
         fields:{type:Object}, tooltip:String, label:String, labelWrapper:Boolean, name:String, id:String },
     data: function() { return { curDisplay:this.display, loading:false } },
     template:
-        '<q-input v-if="labelWrapper" dense outlined readonly stack-label :value="displayValue" :label="label" :id="id" :name="name" :loading="loading">' +
+        '<q-input v-if="labelWrapper" dense outlined readonly stack-label autogrow :value="displayValue" :label="label" :id="id" :name="name" :loading="loading">' +
             '<q-tooltip v-if="tooltip">{{tooltip}}</q-tooltip>' +
         '</q-input>' +
         '<span v-else :id="id">' +
@@ -1732,12 +1732,13 @@ Vue.component('m-drop-down', {
 Vue.component('m-text-line', {
     name: "mTextLine",
     props: { value:String, type:{type:String,'default':'text'}, id:String, name:String, size:String, fields:{type:Object},
-        label:String, tooltip:String, prefix:String, disable:Boolean, mask:String, fillMask:String, rules:Array,
+        label:String, tooltip:String, prefix:String, disable:Boolean, mask:String, fillMask:String, reverseFillMask:Boolean, rules:Array,
         defaultUrl:String, defaultParameters:Object, dependsOn:Object, dependsOptional:Boolean, defaultLoadInit:Boolean },
     data: function() { return { loading:false } },
     template:
         '<q-input dense outlined stack-label :label="label" :prefix="prefix" v-bind:value="value" v-on:input="$emit(\'input\', $event)" :type="type"' +
-                ' :id="id" :name="name" :size="size" :loading="loading" :rules="rules" :disable="disable" :mask="mask" :fill-mask="fillMask"' +
+                ' :id="id" :name="name" :size="size" :loading="loading" :rules="rules" :disable="disable"' +
+                ' :mask="mask" :fill-mask="fillMask" :reverse-fill-mask="reverseFillMask"' +
                 ' autocapitalize="off" autocomplete="off">' +
             '<q-tooltip v-if="tooltip">{{tooltip}}</q-tooltip>' +
         '</q-input>',
