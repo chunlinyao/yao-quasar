@@ -19,7 +19,10 @@ along with this software (see the LICENSE.md file). If not, see
         <set field="capps_root_app" from="ec.user.getPreference('capps.root.app') ?: 'component://yao-quasar/screen/custom.xml'"/>
         <set field="capps_root_app_path" from="ec.user.getPreference('capps.root.app.path') ?: 'custom'"/>
     </always-actions>
-    <pre-actions><script><![CDATA[
+    <pre-actions>
+        <set field="html_keywords" from="ec.user.getPreference('html_keywords') ?: ''"/>
+        <set field="html_description" from="ec.user.getPreference('html_description') ?: ''"/>
+        <script><![CDATA[
         // if user not logged in save current path and params then redirect to Login
         if (!ec.user.userId) { ec.web.saveScreenLastInfo(null, null); sri.sendRedirectAndStopRender('/Login') }
 

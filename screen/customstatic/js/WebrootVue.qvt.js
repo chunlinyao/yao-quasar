@@ -817,7 +817,7 @@ Vue.component('m-form', {
                 moqui.webrootVue.$q.notify($.extend({}, moqui.notifyOpts, { message:message }));
                 moqui.webrootVue.addNotify(message, 'success');
             } else if (!notified) {
-                moqui.webrootVue.$q.notify($.extend({}, moqui.notifyOpts, { message:"Submit successful" }));
+                moqui.webrootVue.$q.notify($.extend({}, moqui.notifyOpts, { message:"保存成功" }));
             }
         }
         /* TODO
