@@ -75,11 +75,11 @@ form.q-form { width:100%; }
 .q-field__label { z-index:10; }
 /* fix disabled opacity, was 0.6 which caused border to bleed through */
 .q-field--disabled .q-field__control > div { opacity:1 !important; }
+/* YAO Added Row */
 .q-field--dense .q-field__label { font-size: 14pt; }
 /* END q-field label move */
 
-.q-field__input { margin-left: 8px;}
-.q-field--focused .q-field__input { border-bottom: var(--q-color-primary) solid 1px;}
+.q-field--focused .q-field__input { border-bottom: var(--q-color-primary) solid 1px; margin-left:8px; }
 
 .q-field--dense .q-field__marginal { height:auto; min-height:40px; }
 .q-field__prepend { max-width:75%; }
@@ -87,7 +87,7 @@ form.q-form { width:100%; }
 
 /* instead of always having 20px bottom area only do when there is an error - may need adjustment for other field bottom uses */
 .q-field--with-bottom { padding-bottom:0; }
-.q-field--with-bottom.q-field--error { padding-bottom:18px; }
+.q-field--with-bottom.q-field--error { padding-bottom:16px; }
 .q-field__bottom { padding-top:4px; }
 
 .q-item__section--avatar { min-width:30px; } /* orig 56px */
@@ -154,7 +154,7 @@ body.desktop .q-table .tr:not(.q-tr--no-hover):hover .td:not(.q-td--no-hover):be
 /* lines 5730-5735 */
 .q-table .q-virtual-scroll__padding .tr { height: 0 !important; }
 .q-table .q-virtual-scroll__padding .td { padding: 0 !important; }
-
+/* YAO Added Row*/
 .q-table .td .q-field__label, .q-table .th .q-field__label {display: none; }
 /* ====== Old Handy Styles ====== */
 
@@ -213,3 +213,5 @@ ul.float-plain.condensed li { margin: 0 4px 0 0; padding: 4px; }
 
     tbody>tr:nth-child(even)>td, .tbody .tr:nth-child(even)>.td { background-color: #EEEEEE !important; }
 }
+
+.ScreenTreeNested { margin: 4px 0 4px 12px; padding: 0 0 0 12px; border-left: 1px dashed lightgrey; }
