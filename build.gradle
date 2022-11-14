@@ -36,7 +36,7 @@ def staticPath = "screen/customstatic"
 def libsPath = staticPath + "/libs"
 
 def jsdelivrBase = "https://cdn.jsdelivr.net/npm/"
-def jsdelivrList = ["quasar@1.15.10/dist/quasar.min.css", "quasar@1.15.10/dist/quasar.umd.min.js", "quasar@1.15.10/dist/lang/zh-hans.umd.min.js"]
+def jsdelivrList = ["quasar@1.15.20/dist/quasar.min.css", "quasar@1.15.20/dist/quasar.umd.min.js", "quasar@1.15.20/dist/lang/zh-hans.umd.min.js"]
 def fontsBase = "https://fonts.googleapis.com/"
 def fontsMap = [webfont: "css?family=Roboto:100,300,400,500,700,900|Material+Icons"]
 
