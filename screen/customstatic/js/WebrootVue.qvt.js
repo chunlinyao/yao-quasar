@@ -1086,9 +1086,9 @@ Vue.component('m-form-column-config', {
                 '</q-item>' +
             '</q-list>' +
             '<div class="q-my-md">' +
-                '<q-btn dense outline no-caps @click.prevent="saveColumns()" label="Save Changes"></q-btn>' +
-                '<q-btn dense outline no-caps @click.prevent="resetColumns()" label="Undo Changes"></q-btn>' +
-                '<q-btn dense outline no-caps @click.prevent="resetToDefault()" label="Reset to Default"></q-btn>' +
+                '<q-btn dense outline no-caps @click.prevent="saveColumns()" label="保存"></q-btn>' +
+                '<q-btn dense outline no-caps @click.prevent="resetColumns()" label="放弃"></q-btn>' +
+                '<q-btn dense outline no-caps @click.prevent="resetToDefault()" label="恢复默认"></q-btn>' +
             '</div>' +
         '</m-form>',
     methods: {
@@ -1337,15 +1337,16 @@ Vue.component('m-date-period', {
     name: "mDatePeriod",
     props: { fields:{type:Object,required:true}, name:{type:String,required:true}, id:String, allowEmpty:Boolean,
         fromThruType:{type:String,'default':'date'}, form:String, tooltip:String, label:String },
-    data: function() { return { fromThruMode:false, dateOffsets:moqui.dateOffsets.slice(), datePeriods:moqui.datePeriods.slice() } },
+        /* YAO: modify default mode to fromThru */
+    data: function() { return { fromThruMode:true, dateOffsets:moqui.dateOffsets.slice(), datePeriods:moqui.datePeriods.slice() } },
     template:
     '<div v-if="fromThruMode" class="row">' +
-        '<m-date-time :name="name+\'_from\'" :id="id+\'_from\'" :label="label+\' From\'" :form="form" :type="fromThruType" v-model="fields[name+\'_from\']"></m-date-time>' +
+        '<m-date-time :name="name+\'_from\'" :id="id+\'_from\'" :label="label+\'(起)\'" :form="form" :type="fromThruType" v-model="fields[name+\'_from\']"></m-date-time>' +
         '<q-icon class="q-my-auto" name="remove"></q-icon>' +
-        '<m-date-time :name="name+\'_thru\'" :id="id+\'_thru\'" :label="label+\' Thru\'" :form="form" :type="fromThruType" v-model="fields[name+\'_thru\']">' +
+        '<m-date-time :name="name+\'_thru\'" :id="id+\'_thru\'" :label="label+\'(终)\'" :form="form" :type="fromThruType" v-model="fields[name+\'_thru\']">' +
             '<template v-slot:after>' +
                 '<q-btn dense flat icon="calendar_view_day" @click="toggleMode"><q-tooltip>Period Select Mode</q-tooltip></q-btn>' +
-                '<q-btn dense flat icon="clear" @click="clearAll"><q-tooltip>Clear</q-tooltip></q-btn>' +
+                '<q-btn dense flat icon="clear" @click="clearAll"><q-tooltip>清空</q-tooltip></q-btn>' +
             '</template>' +
         '</m-date-time>' +
     '</div>' +
@@ -1354,9 +1355,9 @@ Vue.component('m-date-period', {
         '<q-tooltip v-if="tooltip">{{tooltip}}</q-tooltip>' +
         '<template v-slot:before>' +
             '<q-select class="q-pr-xs" dense outlined options-dense emit-value map-options v-model="fields[name+\'_poffset\']" :name="name+\'_poffset\'"' +
-                ' stack-label label="Offset" :options="dateOffsets" :form="form" behavior="menu"></q-select>' +
+                ' stack-label label="偏移" :options="dateOffsets" :form="form" behavior="menu"></q-select>' +
             '<q-select dense outlined options-dense emit-value map-options v-model="fields[name+\'_period\']" :name="name+\'_period\'"' +
-                ' stack-label label="Period" :options="datePeriods" :form="form" behavior="menu"></q-select>' +
+                ' stack-label label="期间" :options="datePeriods" :form="form" behavior="menu"></q-select>' +
         '</template>' +
         '<template v-slot:prepend>' +
             '<q-icon name="event" class="cursor-pointer">' +
@@ -1366,8 +1367,8 @@ Vue.component('m-date-period', {
             '</q-icon>' +
         '</template>' +
         '<template v-slot:after>' +
-            '<q-btn dense flat icon="date_range" @click="toggleMode"><q-tooltip>Date Range Mode</q-tooltip></q-btn>' +
-            '<q-btn dense flat icon="clear" @click="clearAll"><q-tooltip>Clear</q-tooltip></q-btn>' +
+            '<q-btn dense flat icon="date_range" @click="toggleMode"><q-tooltip>期间模式</q-tooltip></q-btn>' +
+            '<q-btn dense flat icon="clear" @click="clearAll"><q-tooltip>清空</q-tooltip></q-btn>' +
         '</template>' +
     '</q-input></div>',
     methods: {
