@@ -148,3 +148,35 @@ along with this software (see the LICENSE.md file). If not, see
                 <#lt><#if ownerForm?has_content> form="${ownerForm}"</#if><#if tlSubFieldNode["@tooltip"]?has_content> tooltip="${ec.getResource().expand(tlSubFieldNode["@tooltip"], "")?html}"</#if>></m-text-line>
     </#if>
 </#macro>
+
+<#macro "dynamic-dialog">
+    <#assign iconClass = "fa fa-share">
+    <#if .node["@icon"]?has_content><#assign iconClass = .node["@icon"]></#if>
+    <#if .node["@condition"]?has_content><#assign conditionResult = ec.getResource().condition(.node["@condition"], "")><#else><#assign conditionResult = true></#if>
+    <#if conditionResult>
+        <#-- YAO Added depNodeList -->
+        <#assign depNodeList = .node["depends-on"]>
+        <#assign buttonText = ec.getResource().expand(.node["@button-text"], "")>
+        <#assign title = ec.getResource().expand(.node["@title"], "")>
+        <#if !title?has_content><#assign title = buttonText></#if>
+        <#assign urlInstance = sri.makeUrlByType(.node["@transition"], "transition", .node, "true")>
+        <#assign ddDivId><@nodeId .node/></#assign>
+        <#if urlInstance.disableLink>
+            <q-btn disabled dense outline no-caps icon="open_in_new" label="${buttonText}" color="<@getQuasarColor ec.getResource().expandNoL10n(.node["@type"]!"primary", "")/>" class="${ec.getResource().expandNoL10n(.node["@button-style"]!"", "")}"></q-btn>
+        <#else>
+        <#-- YAO Added fields dependsOn-->
+            <m-dynamic-dialog id="${ddDivId}" url="${urlInstance.urlWithParams}" color="<@getQuasarColor ec.getResource().expandNoL10n(.node["@type"]!"primary", "")/>" width="${.node["@width"]!""}"
+                    <#t> :depends-on="{<#list depNodeList as depNode><#local depNodeField = depNode["@field"]>'${depNode["@parameter"]!depNodeField}':'${depNodeField}'<#sep>, </#list>}"
+                    <#if fieldsJsName?has_content>
+                        :fields="${fieldsJsName}"
+                    </#if>
+                    button-text="${buttonText}" button-class="${ec.getResource().expandNoL10n(.node["@button-style"]!"", "")}" title="${title}"<#if _openDialog! == ddDivId> :openDialog="true"</#if>></m-dynamic-dialog>
+        </#if>
+        <#-- used to use afterFormText for m-dynamic-dialog inside another form, needed now?
+        <#assign afterFormText>
+        <m-dynamic-dialog id="${ddDivId}" url="${urlInstance.urlWithParams}" width="${.node["@width"]!""}" button-text="${buttonText}" title="${buttonText}"<#if _openDialog! == ddDivId> :openDialog="true"</#if>></m-dynamic-dialog>
+        </#assign>
+        <#t>${sri.appendToAfterScreenWriter(afterFormText)}
+        -->
+    </#if>
+</#macro>

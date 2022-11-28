@@ -464,8 +464,9 @@ Vue.component('m-dynamic-container', {
 });
 Vue.component('m-dynamic-dialog', {
     name: "mDynamicDialog",
+    //YAO ADD: dependsOn
     props: { id:{type:String}, url:{type:String,required:true}, color:String, buttonText:String, buttonClass:String, title:String, width:{type:String},
-        openDialog:{type:Boolean,'default':false}, dynamicParams:{type:Object,'default':null} },
+        openDialog:{type:Boolean,'default':false}, dynamicParams:{type:Object,'default':null}, dependsOn:Object, fields:Object},
     data: function() { return { curComponent:moqui.EmptyComponent, curUrl:"", isShown:false} },
     template:
     '<span>' +
@@ -489,6 +490,24 @@ Vue.component('m-dynamic-dialog', {
                 });
                 if (dpStr.length) newUrl = newUrl + (newUrl.indexOf("?") > 0 ? '&' : '?') + dpStr;
             }
+            // YAO Added: dependsOn
+            var dependsOnMap = this.dependsOn;
+            var dpStr = '';
+            for (var doParm in dependsOnMap) { if (dependsOnMap.hasOwnProperty(doParm)) {
+                var doValue;
+                if (this.fields) {
+                    doValue = this.fields[dependsOnMap[doParm]];
+                } else {
+                    var doParmJqEl = $('#' + dependsOnMap[doParm]);
+                    doValue = doParmJqEl.val();
+                    if (!doValue) doValue = doParmJqEl.find('select').val();
+                }
+                if (doValue) {
+                    dpStr = dpStr + (dpStr.length > 0 ? '&' : '') + doParm + '=' + doValue;
+                }
+            }}
+            if (dpStr.length) newUrl = newUrl + (newUrl.indexOf("?") > 0 ? '&' : '?') + dpStr;
+
             moqui.loadComponent(newUrl, function(comp) {
                 comp.mounted = function() { this.$nextTick(function () { vm.$refs.dialog.focusFirst(); }); };
                 vm.curComponent = comp;
