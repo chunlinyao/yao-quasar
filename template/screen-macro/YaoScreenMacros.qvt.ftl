@@ -180,3 +180,16 @@ along with this software (see the LICENSE.md file). If not, see
         -->
     </#if>
 </#macro>
+<#macro "m-luckysheet">
+    <#assign tlSubFieldNode = .node?parent>
+    <#assign tlFieldNode = tlSubFieldNode?parent>
+    <#assign tlId><@fieldId .node/></#assign>
+    <#assign name><@fieldName .node/></#assign>
+    <#assign dcDivId><@nodeId .node/></#assign>
+    <#assign urlInstance = sri.makeUrlByType(.node["@transition"], "transition", .node, "true")>
+    <m-luckysheet id="${dcDivId}" 
+     <#if fieldsJsName?has_content> 
+        :fields="${fieldsJsName}" v-model.trim="${fieldsJsName}.${name}"
+    </#if>
+     url="${urlInstance.passThroughSpecialParameters().urlWithParams}"></m-luckysheet>
+</#macro>

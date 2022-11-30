@@ -2555,3 +2555,42 @@ Object.defineProperty(Vue.prototype, '$router', {
 Object.defineProperty(Vue.prototype, '$route', {
     get: function get() { return moqui.webrootVue.getRoute(); }
 });
+
+//YAO ADDED
+Vue.component('m-luckysheet', {
+    name: 'mLuckysheet',
+    props: { id:{type:String, required: true}, fields: {type: Object}, url:{type:String}, config:{type:Object}, height:{type:String,'default':'400px'}, width:{type:String,'default':'100%'} },
+    template: '<div class="sheet-container" style="position:relative;" :style="{height:height,width:width}"><div style=<div :id="id" style="margin:0px;padding:0px;position:absolute;width:100%;height:100%;left: 0px;top: 0px;"></div></div>',
+    data: function() { return { instance:null } },
+    mounted: function() {
+        var vm = this;
+        moqui.loadStylesheet('/cs/libs/luckysheet/plugins/css/pluginsCss.css');
+        moqui.loadStylesheet('/cs/libs/luckysheet/plugins/css/plugins.css');
+        moqui.loadStylesheet('/cs/libs/luckysheet/css/luckysheet.css');
+        moqui.loadStylesheet('/cs/libs/luckysheet/assets/iconfont/iconfont.css');
+        moqui.loadScript('/cs/libs/luckysheet/plugins/js/plugin.js', function(err) {
+            if (err) return;
+            moqui.loadScript('/cs/libs/luckysheet/luckysheet.umd.js', function(err) {
+                if (err) return;
+                var options = Object.assign({}, vm.config, {
+                    container: vm.id, //luckysheet容器,
+                    lang: 'zh',
+                    showtoolbar: false,
+                    showinfobar: false,
+                    showsheetbar: false,
+                    loadUrl: vm.url,
+                    hook: {
+                        updated: function() {
+                            if (vm.fields) {
+                                var sheet = luckysheet.getAllSheets()[0];
+                                vm.$emit('input', JSON.stringify(sheet.celldata));
+                            }
+                           return true;
+                        }
+                    }
+                });
+                vm.instance = luckysheet.create(options);
+            }, function() { return !!window.luckysheet; });
+        });
+    }
+});
