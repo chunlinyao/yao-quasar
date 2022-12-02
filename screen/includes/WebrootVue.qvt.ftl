@@ -190,7 +190,7 @@ along with this software (see the LICENSE.md file). If not, see
             </div>
         </div>
         <div v-else>
-            <div style="text-align:center;padding-bottom:10px">Please sign in to continue as user <strong>{{username}}</strong></div>
+            <div style="text-align:center;padding-bottom:10px">请重新登录为用户<strong>{{username}}</strong></div>
             <q-form @submit.prevent="reLoginSubmit" autocapitalize="off" autocomplete="off">
                 <q-input v-model="reLoginPassword" name="password" type="password" :autofocus="true"
                          outlined stack-label label="${ec.l10n.localize("Password")}"></q-input>
