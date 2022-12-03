@@ -464,13 +464,13 @@ Vue.component('m-dynamic-container', {
 });
 Vue.component('m-dynamic-dialog', {
     name: "mDynamicDialog",
-    //YAO ADD: dependsOn
-    props: { id:{type:String}, url:{type:String,required:true}, color:String, buttonText:String, buttonClass:String, title:String, width:{type:String},
+    //YAO ADD: dependsOn, icon
+    props: { id:{type:String}, url:{type:String,required:true}, icon: {type:String,'default': 'open_in_new'}, color:String, buttonText:String, buttonClass:String, title:String, width:{type:String},
         openDialog:{type:Boolean,'default':false}, dynamicParams:{type:Object,'default':null}, dependsOn:Object, fields:Object},
     data: function() { return { curComponent:moqui.EmptyComponent, curUrl:"", isShown:false} },
     template:
     '<span>' +
-        '<q-btn dense outline no-caps icon="open_in_new" :label="buttonText" :color="color" :class="buttonClass" @click="isShown = true"></q-btn>' +
+        '<q-btn dense outline no-caps :icon="icon" :label="buttonText" :color="color" :class="buttonClass" @click="isShown = true"></q-btn>' +
         '<m-dialog ref="dialog" v-model="isShown" :id="id" :title="title" :color="color" :width="width"><component :is="curComponent"></component></m-dialog>' +
     '</span>',
     methods: {
