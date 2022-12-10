@@ -12,12 +12,6 @@
         </screen>
         <screen location="component://yao-quasar/screen/custom.xml">
             <subscreens-item name="my" menu-title="My Account" menu-index="90" location="component://SimpleScreens/screen/MyAccount.xml"/>
-            <subscreens-item name="hm" menu-title="HiveMind PM" menu-index="7" location="component://HiveMind/screen/HiveMindRoot.xml"/>
-            <subscreens-item name="hmadmin" menu-title="HiveMind Admin" menu-index="8" location="component://HiveMind/screen/HiveMindAdmin.xml"/>
-            <subscreens-item name="PopcAdmin" menu-title="POPC ERP" menu-index="9" location="component://PopCommerce/screen/PopCommerceAdmin.xml"/>
-            <subscreens-item name="hhwh" menu-title="HH Warehouse" menu-index="20" location="component://SimpleScreens/screen/BasicHandheld/Warehouse.xml"/>
-            <subscreens-item name="example" menu-title="Example" menu-index="97" location="component://example/screen/ExampleApp.xml"/>
-            <subscreens-item name="Workflow" menu-title="Workflow" location="component://moqui-workflow/screen/Workflow.xml"/>
             <subscreens-item name="system" menu-title="System" menu-index="98" location="component://tools/screen/System.xml"/>
             <subscreens-item name="tools" menu-title="Tools" menu-index="99" location="component://tools/screen/Tools.xml"/>
         </screen>

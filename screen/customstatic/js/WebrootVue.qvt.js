@@ -850,7 +850,7 @@ Vue.component('m-form', {
                 moqui.webrootVue.$q.notify($.extend({}, moqui.notifyOpts, { message:message }));
                 moqui.webrootVue.addNotify(message, 'success');
             } else if (!notified) {
-                moqui.webrootVue.$q.notify($.extend({}, moqui.notifyOpts, { message:"保存成功" }));
+                moqui.webrootVue.$q.notify($.extend({}, moqui.notifyOpts, { message:"提交成功" }));
             }
         }
         /* TODO
@@ -1107,7 +1107,7 @@ Vue.component('m-form-column-config', {
             '<div class="q-my-md">' +
                 '<q-btn dense outline no-caps @click.prevent="saveColumns()" label="保存"></q-btn>' +
                 '<q-btn dense outline no-caps @click.prevent="resetColumns()" label="放弃"></q-btn>' +
-                '<q-btn dense outline no-caps @click.prevent="resetToDefault()" label="恢复默认"></q-btn>' +
+                '<q-btn dense outline no-caps @click.prevent="resetToDefault()" label="重置"></q-btn>' +
             '</div>' +
         '</m-form>',
     methods: {
@@ -2546,8 +2546,9 @@ moqui.webrootRouter = {
             hash:location.hash||"", query:location.query||"", params: {}, fullPath:path, matched:[] };
         return { location:location, route:route, href:moqui.makeHref(location), normalizedTo:location, resolved:route }
     },
-    replace: function(location, onComplete, onAbort) { moqui.webrootVue.setUrl(location, null, onComplete); },
-    push: function(location, onComplete, onAbort) { moqui.webrootVue.setUrl(location, null, onComplete); }
+    //YAO ADDED: router api require return promise.
+    replace: function(location, onComplete, onAbort) { moqui.webrootVue.setUrl(location, null, onComplete); return Promise.resolve();},
+    push: function(location, onComplete, onAbort) { moqui.webrootVue.setUrl(location, null, onComplete); return Promise.resolve();}
 }
 Object.defineProperty(Vue.prototype, '$router', {
     get: function get() { return moqui.webrootRouter; }

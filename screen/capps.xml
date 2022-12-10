@@ -50,7 +50,7 @@ along with this software (see the LICENSE.md file). If not, see
             // http-vue-loader
             footer_scripts.add('/js/http-vue-loader/httpVueLoader.js')
             // Quasar
-            footer_scripts.add("/cs/libs/quasar/quasar.umd.min.js")
+            footer_scripts.add("/cs/libs/quasar/quasar.umd.js")
             footer_scripts.add("/cs/libs/quasar/zh-hans.umd.min.js")
             // Webroot Quasar-Vue instance, in footer so runs after page loaded
             footer_scripts.add('/cs/js/WebrootVue.qvt.js')
@@ -60,7 +60,7 @@ along with this software (see the LICENSE.md file). If not, see
         if (ec.user.getPreference("qz.print.enabled") == "true") {
             footer_scripts.add('/libs/rsvp/rsvp.min.js')
             footer_scripts.add('/js/qz-tray/sha-256.min.js')
-            footer_scripts.add('/js/qz-tray/qz-tray.min.js')
+            footer_scripts.add('/kwstatic/lib/qz-tray.js')
             // TODO migrate MoquiQzComponent.js to MoquiQzComponent.qvt.js
             footer_scripts.add('/kwstatic/lib/MoquiQzComponent.js')
         }
