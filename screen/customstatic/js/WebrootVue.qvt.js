@@ -2561,7 +2561,7 @@ Object.defineProperty(Vue.prototype, '$route', {
 Vue.component('m-luckysheet', {
     name: 'mLuckysheet',
     props: { id:{type:String, required: true}, fields: {type: Object}, url:{type:String}, config:{type:Object}, height:{type:String,'default':'400px'}, width:{type:String,'default':'100%'} },
-    template: '<div class="sheet-container" style="position:relative;" :style="{height:height,width:width}"><div style=<div :id="id" style="margin:0px;padding:0px;position:absolute;width:100%;height:100%;left: 0px;top: 0px;"></div></div>',
+    template: '<div class="sheet-container" style="position:relative;" :style="{height:height,width:width}"><div :id="id" style="margin:0px;padding:0px;position:absolute;width:100%;height:100%;left: 0px;top: 0px;"></div></div>',
     data: function() { return { instance:null } },
     methods: {
         updateInput: function() {
