@@ -103,7 +103,7 @@ moqui.handleAjaxError = function(jqXHR, textStatus, errorThrown, responseText) {
     // console.error('resp [' + resp + '] respObj: ' + JSON.stringify(respObj));
     var notified = false;
     if (jqXHR.status === 401) {
-        notified = moqui.notifyMessages(null, "No user authenticated");
+        notified = moqui.notifyMessages(null, "用户未登录");
     } else {
         if (respObj && moqui.isPlainObject(respObj)) {
             notified = moqui.notifyMessages(respObj.messageInfos, respObj.errors, respObj.validationErrors);
