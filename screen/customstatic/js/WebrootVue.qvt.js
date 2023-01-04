@@ -2517,7 +2517,7 @@ moqui.webrootVue = new Vue({
         this.notificationClient.registerListener("ALL");
 
         // request Notification permission on load if not already granted or denied
-        if (window.Notification && Notification.permission !== "granted" && Notification.permission !== "denied") {
+        if (window.Notification && Notification.permission !== "granted" && Notification.permission !== "denied" && window.location.protocol == 'https') {
             Notification.requestPermission(function (status) {
                 if (status === "granted") {
                     moqui.notifyMessages("Browser notifications enabled, if you don't want them use browser notification settings to block");
