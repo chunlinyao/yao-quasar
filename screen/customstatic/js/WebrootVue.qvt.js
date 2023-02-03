@@ -2602,5 +2602,10 @@ Vue.component('m-luckysheet', {
                 vm.instance = luckysheet.create(options);
             }, function() { return !!window.luckysheet; });
         });
-    }
+        vm.blurhandler = function(){luckysheet.exitEditMode();};
+        $(document).on('focusout', '.luckysheet-cell-input', vm.blurhandler);
+    },
+    beforeDestroy: function() {
+        $(document).off('focusout', vm.blurhandler);
+    },
 });
