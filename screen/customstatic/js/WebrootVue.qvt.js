@@ -786,9 +786,12 @@ Vue.component('m-form', {
                         var blob = this.response;
                         var filename = "";
                         if (disposition && disposition.indexOf('attachment') !== -1) {
-                            var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                            var filenameRegex = /filename[^;=\n*]*=((['"]).*?\2|[^;\n]*)/;
+                            var filenameUtf8Regex = /filename\*[^;=\n]*=utf-8''((['"]).*?\2|[^;\n]*)/i ;
                             var matches = filenameRegex.exec(disposition);
+                            var matchesUtf8 = filenameUtf8Regex.exec(disposition);
                             if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g, '');
+                            if (matchesUtf8 != null && matchesUtf8[1]) filename = decodeURIComponent(matchesUtf8[1].replace(/['"]/g, ''));
                         }
 
                         if (typeof window.navigator.msSaveBlob !== 'undefined') {
