@@ -2688,6 +2688,7 @@ Vue.component('m-luckysheet', {
         //$(document).on('keydown', '.luckysheet-cell-input.editable', vm.keydownHandler);
     },
     beforeDestroy: function() {
+        var vm = this;
         $(document).off('focusout', vm.blurhandler);
         //$(document).off('keydown', vm.keydownHandler);
     },
