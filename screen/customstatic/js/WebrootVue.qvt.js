@@ -142,9 +142,13 @@ moqui.handleAjaxError = function(jqXHR, textStatus, errorThrown, responseText) {
 /* Override moqui.notifyGrowl */
 moqui.notifyGrowl = function(jsonObj) {
     if (!jsonObj) return;
-    // TODO: jsonObj.link, jsonObj.icon
-    moqui.webrootVue.$q.notify($.extend({}, moqui.notifyOptsInfo, { type:jsonObj.type, message:jsonObj.title }));
-    moqui.webrootVue.addNotify(jsonObj.title, jsonObj.type);
+    // TODO: jsonObj.icon
+    moqui.webrootVue.$q.notify($.extend({}, moqui.notifyOptsInfo, { type:jsonObj.type, message:jsonObj.title,
+        actions: [
+            { label: '查看', color: 'white', handler: function () { moqui.webrootVue.setUrl(jsonObj.link); } }
+        ]
+    }));
+    moqui.webrootVue.addNotify(jsonObj.title, jsonObj.type, jsonObj.link, jsonObj.icon);
 };
 
 /* ========== component loading methods ========== */
@@ -1521,7 +1525,7 @@ Vue.component('m-drop-down', {
                 ' dense outlined options-dense use-input :hide-selected="multiple" :name="name" :id="id" :form="form"' +
                 ' input-debounce="500" @filter="filterFn" :clearable="allowEmpty||multiple" :disable="disable"' +
                 ' :multiple="multiple" :emit-value="!onSelectGoTo" map-options behavior="menu"' +
-                ' :rules="[val => allowEmpty||multiple||val===\'\'||(val&&val.length)||\'请选择一个选项\']"' +
+                ' :rules="[val => allowEmpty||multiple||(val&&val.length)||\'请选择一个选项\']"' +
                 ' stack-label :label="label" :loading="loading" :options="curOptions">' +
             '<q-tooltip v-if="tooltip">{{tooltip}}</q-tooltip>' +
             '<template v-slot:no-option><q-item><q-item-section class="text-grey">没有结果</q-item-section></q-item></template>' +
@@ -1751,7 +1755,6 @@ Vue.component('m-drop-down', {
     },
     mounted: function() {
         // TODO: handle combo somehow: if (this.combo) { opts.tags = true; opts.tokenSeparators = [',',' ']; }
-
         if (this.serverSearch) {
             if (!this.optionsUrl) console.error("m-drop-down in form " + this.form + " has no options-url but has server-search=true");
         }
@@ -2283,13 +2286,13 @@ moqui.webrootVue = new Vue({
             this.urlListeners.push(urlListenerFunction);
         },
 
-        addNotify: function(message, type) {
+        addNotify: function(message, type, link, icon) {
             var histList = this.notifyHistoryList.slice(0);
             var nowDate = new Date();
             var nh = nowDate.getHours(); if (nh < 10) nh = '0' + nh;
             var nm = nowDate.getMinutes(); if (nm < 10) nm = '0' + nm;
             // var ns = nowDate.getSeconds(); if (ns < 10) ns = '0' + ns;
-            histList.unshift({message:message, type:type, time:(nh + ':' + nm)}); //  + ':' + ns
+            histList.unshift({message:message, type:type, time:(nh + ':' + nm), link:link, icon:icon}); //  + ':' + ns
             while (histList.length > 25) { histList.pop(); }
             this.notifyHistoryList = histList;
         },
