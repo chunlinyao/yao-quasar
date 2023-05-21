@@ -26,34 +26,34 @@ along with this software (see the LICENSE.md file). If not, see
         // if user not logged in save current path and params then redirect to Login
         if (!ec.user.userId) { ec.web.saveScreenLastInfo(null, null); sri.sendRedirectAndStopRender('/Login') }
 
-        html_scripts.add('/libs/moment.js/moment-with-locales.min.js')
-        html_scripts.add('/libs/jquery/jquery.min.js')
+        html_scripts.add("/libs/moment.js/moment-with-locales.min.js")
+        html_scripts.add("/libs/jquery/jquery.min.js")
 
         String instancePurpose = System.getProperty("instance_purpose")
         if (!instancePurpose || instancePurpose == 'production') {
             /* ========== Production Mode ========== */
-            html_scripts.add('/js/MoquiLib.min.js')
+            html_scripts.add("/js/MoquiLib.min.js")
             // Vue JS
-            footer_scripts.add('/libs/vue/vue.min.js')
+            footer_scripts.add("/libs/vue/vue.min.js")
             // http-vue-loader
-            footer_scripts.add('/js/http-vue-loader/httpVueLoader.js')
+            footer_scripts.add("/js/http-vue-loader/httpVueLoader.js")
             // Quasar
-            footer_scripts.add("/cs/libs/quasar/quasar.umd.min.js")
-            footer_scripts.add("/cs/libs/quasar/zh-hans.umd.min.js")
+            footer_scripts.add("/cs/libs/quasar/dist/quasar.umd.min.js")
+            footer_scripts.add("/cs/libs/quasar/dist/lang/zh-hans.umd.min.js")
             // Webroot Quasar-Vue instance, in footer so runs after page loaded
-            footer_scripts.add('/cs/js/WebrootVue.qvt.min.js')
+            footer_scripts.add("/cs/js/WebrootVue.qvt.min.js")
         } else {
             /* ========== Dev Mode ========== */
-            html_scripts.add('/js/MoquiLib.js')
+            html_scripts.add("/js/MoquiLib.js")
             // Vue JS
-            footer_scripts.add('/libs/vue/vue.js')
+            footer_scripts.add("/libs/vue/vue.js")
             // http-vue-loader
-            footer_scripts.add('/js/http-vue-loader/httpVueLoader.js')
+            footer_scripts.add("/js/http-vue-loader/httpVueLoader.js")
             // Quasar
-            footer_scripts.add("/cs/libs/quasar/quasar.umd.js")
-            footer_scripts.add("/cs/libs/quasar/zh-hans.umd.min.js")
+            footer_scripts.add("/cs/libs/quasar/dist/quasar.umd.js")
+            footer_scripts.add("/cs/libs/quasar/dist/lang/zh-hans.umd.min.js")
             // Webroot Quasar-Vue instance, in footer so runs after page loaded
-            footer_scripts.add('/cs/js/WebrootVue.qvt.js')
+            footer_scripts.add("/cs/js/WebrootVue.qvt.js")
         }
 
         // conditional QZ Tray scripts, only include if enabled

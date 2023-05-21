@@ -1879,7 +1879,7 @@ Vue.component('m-chart', {
     data: function() { return { instance:null } },
     mounted: function() {
         var vm = this;
-        moqui.loadScript('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js', function(err) {
+        moqui.loadScript('/cs/libs/chart.js/dist/chart.umd.min.js', function(err) {
             if (err) {
                 console.error("Error loading m-chart script: " + err);
                 return;

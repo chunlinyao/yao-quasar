@@ -33,7 +33,7 @@ along with this software (see the LICENSE.md file). If not, see
     <moqui.screen.ScreenThemeResource screenThemeId="DEFAULT_YAO_QUASAR" sequenceNum="3" resourceTypeEnumId="STRT_STYLESHEET"
             resourceValue="/cs/libs/webfont/font.css"/>
     <moqui.screen.ScreenThemeResource screenThemeId="DEFAULT_YAO_QUASAR" sequenceNum="4" resourceTypeEnumId="STRT_STYLESHEET"
-            resourceValue="/cs/libs/quasar/quasar.min.css"/>
+            resourceValue="/cs/libs/quasar/dist/quasar.min.css"/>
 
     <!-- Add external theme(s) here  -->
     <moqui.screen.ScreenThemeResource screenThemeId="DEFAULT_YAO_QUASAR" sequenceNum="10" resourceTypeEnumId="STRT_STYLESHEET" resourceValue=""/>
