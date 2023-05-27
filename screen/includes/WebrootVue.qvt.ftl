@@ -11,6 +11,11 @@ You should have received a copy of the CC0 Public Domain Dedication
 along with this software (see the LICENSE.md file). If not, see
 <http://creativecommons.org/publicdomain/zero/1.0/>.
 -->
+<#assign preFetchItemList = sri.getThemeValues("STRT_PREFETCH_ITEM")>
+<#list preFetchItemList! as prefetchItem>
+    <#assign prefetchItemTemplate = prefetchItem?interpret>
+    <@prefetchItemTemplate/>
+</#list>
 <div id="apps-root" style="display:none;"><#-- NOTE: webrootVue component attaches here, uses this and below for template -->
     <input type="hidden" id="confMoquiSessionToken" value="${ec.web.sessionToken}">
     <input type="hidden" id="confAppHost" value="${ec.web.getHostName(true)}">
