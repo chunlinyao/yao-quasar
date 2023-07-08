@@ -1884,7 +1884,13 @@ Vue.component('m-chart', {
                 console.error("Error loading m-chart script: " + err);
                 return;
             }
-            vm.instance = new Chart(vm.$refs.canvas, vm.config);
+            moqui.loadScript('/cs/libs/chartjs-adapter-moment/dist/chartjs-adapter-moment.min.js', function(err) {
+                if (err) {
+                    console.error("Error loading m-chart script: " + err);
+                    return;
+                }
+                vm.instance = new Chart(vm.$refs.canvas, vm.config);
+            });
         }, function() { return !!window.Chart; });
     },
     watch: {

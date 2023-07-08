@@ -37,7 +37,7 @@ def libsPath = staticPath + "/libs"
 
 def jsdelivrBase = "https://cdn.jsdelivr.net/npm/"
 def jsdelivrList = ["quasar@1.22.2/dist/quasar.min.css", "quasar@1.22.2/dist/quasar.umd.min.js", "quasar@1.22.2/dist/lang/zh-hans.umd.min.js",
-    "chart.js@4.3.0/dist/chart.umd.min.js"]
+    "chart.js@4.3.0/dist/chart.umd.min.js", "chartjs-adapter-moment@^1/dist/chartjs-adapter-moment.min.js"]
 def fontsBase = "https://fonts.googleapis.com/"
 def fontsMap = [webfont: "css?family=Roboto:100,300,400,500,700,900|Material+Icons"]
 
