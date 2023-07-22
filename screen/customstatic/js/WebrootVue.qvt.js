@@ -293,7 +293,7 @@ Vue.component('m-link', {
         if (this.loadId && this.loadId.length > 0) {
             this.$root.loadContainer(this.loadId, this.href);
         } else {
-            if (event.ctrlKey || event.metaKey) {
+            if (event.ctrlKey || event.metaKey || this.$attrs.target == '_blank') {
                 window.open(this.linkHref, "_blank");
             } else {
                 this.$root.setUrl(this.linkHref);
