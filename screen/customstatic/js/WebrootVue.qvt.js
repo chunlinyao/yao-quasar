@@ -2617,7 +2617,7 @@ Vue.component('m-luckysheet', {
     name: 'mLuckysheet',
     props: { id:{type:String, required: true}, fields: {type: Object}, url:{type:String}, config:{type:Object}, height:{type:String,'default':'400px'}, width:{type:String,'default':'100%'} },
     template: '<div class="sheet-container" style="position:relative;" :style="{height:height,width:width}"><div :id="id" style="margin:0px;padding:0px;position:absolute;width:100%;height:100%;left: 0px;top: 0px;"></div></div>',
-    data: function() { return { instance:null } },
+    data: function() { return { instance:null, recoveryData: null } },
     methods: {
         updateInput: function() {
             var vm = this;
@@ -2625,10 +2625,28 @@ Vue.component('m-luckysheet', {
                 var sheet = luckysheet.getAllSheets()[0];
                 vm.$emit('input', JSON.stringify(sheet.celldata));
             }
+        },
+        loadRecoveryData: function() {
+            var vm = this;
+            var data = vm.$q.sessionStorage.getItem('LUCKYSHEET_DATA');
+            if (data && data.url == vm.url) {
+                vm.recoveryData = data.sheetData;
+            } else {
+                vm.clearRecoveryData();
+            }
+        },
+        saveRecoveryData: function() {
+            var vm = this;
+            this.$q.sessionStorage.set('LUCKYSHEET_DATA', {url: vm.url, sheetData: luckysheet.getAllSheets()});
+        },
+        clearRecoveryData: function() {
+            this.$q.sessionStorage.remove('LUCKYSHEET_DATA');
         }
     },
     mounted: function() {
         var vm = this;
+        var formEl = this.$parent.$el;
+        vm.loadRecoveryData();
         moqui.loadStylesheet('/cs/libs/luckysheet/plugins/css/pluginsCss.css');
         moqui.loadStylesheet('/cs/libs/luckysheet/plugins/css/plugins.css');
         moqui.loadStylesheet('/cs/libs/luckysheet/css/luckysheet.css');
@@ -2647,10 +2665,23 @@ Vue.component('m-luckysheet', {
                     hook: {
                         updated: function() {
                             vm.updateInput();
+                            vm.saveRecoveryData();
                             return true;
                         },
                         workbookCreateAfter:function() {
                             vm.updateInput();
+                            if (vm.recoveryData) {
+                                vm.$q.dialog({
+                                    title: '数据恢复',
+                                    message: '发现未保存的数据，需要恢复吗？',
+                                    cancel: true,
+                                    persistent: true
+                                }).onOk(() => {
+                                    luckysheet.updataSheet({data:vm.recoveryData});
+                                }).onCancel(() => {
+                                    vm.clearRecoveryData();
+                                });
+                            }
                         }
                     }
                 });
@@ -2687,12 +2718,19 @@ Vue.component('m-luckysheet', {
                 luckysheet.exitEditMode();
             }
         }
+        formEl.addEventListener("submit", () => {
+            vm.submitTime = new Date();
+        });
         $(document).on('focusout', '.luckysheet-cell-input', vm.blurhandler);
         //$(document).on('keydown', '.luckysheet-cell-input.editable', vm.keydownHandler);
+        
     },
     beforeDestroy: function() {
         var vm = this;
         $(document).off('focusout', vm.blurhandler);
         //$(document).off('keydown', vm.keydownHandler);
+        if (vm.submitTime && (new Date() - vm.submitTime) < 3000) {
+            vm.clearRecoveryData();
+        }
     },
 });
