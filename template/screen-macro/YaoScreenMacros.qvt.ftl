@@ -184,7 +184,7 @@ along with this software (see the LICENSE.md file). If not, see
 
 <#macro "container-dialog">
     <#-- TODO: somehow support at least fa icons backward compatible? won't be doing glyphicons anyway -->
-    <#assign iconClass = "">
+    <#assign iconClass = "open_in_new">
     <#if .node["@icon"]?has_content><#assign iconClass = .node["@icon"]></#if>
     <#if .node["@condition"]?has_content><#assign conditionResult = ec.getResource().condition(.node["@condition"], "")><#else><#assign conditionResult = true></#if>
     <#if conditionResult>
