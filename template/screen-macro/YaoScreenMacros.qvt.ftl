@@ -182,7 +182,22 @@ along with this software (see the LICENSE.md file). If not, see
     </#if>
 </#macro>
 
-
+<#macro "container-dialog">
+    <#-- TODO: somehow support at least fa icons backward compatible? won't be doing glyphicons anyway -->
+    <#assign iconClass = "">
+    <#if .node["@icon"]?has_content><#assign iconClass = .node["@icon"]></#if>
+    <#if .node["@condition"]?has_content><#assign conditionResult = ec.getResource().condition(.node["@condition"], "")><#else><#assign conditionResult = true></#if>
+    <#if conditionResult>
+        <#assign buttonText = ec.getResource().expand(.node["@button-text"], "")>
+        <#assign title = ec.getResource().expand(.node["@title"], "")>
+        <#if !title?has_content><#assign title = buttonText></#if>
+        <#assign cdDivId><@nodeId .node/></#assign>
+        <m-container-dialog id="${cdDivId}" color="<@getQuasarColor ec.getResource().expandNoL10n(.node["@type"]!"primary", "")/>" width="${.node["@width"]!""}"
+                button-text="${buttonText}" button-icon="${iconClass}" button-class="${ec.getResource().expandNoL10n(.node["@button-style"]!"", "")}" title="${title}"<#if _openDialog! == cdDivId> :openDialog="true"</#if>>
+            <#recurse>
+        </m-container-dialog>
+    </#if>
+</#macro>
 <#macro "m-luckysheet">
     <#assign tlSubFieldNode = .node?parent>
     <#assign tlFieldNode = tlSubFieldNode?parent>
