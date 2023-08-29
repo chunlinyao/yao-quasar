@@ -1,0 +1,295 @@
+<template>
+    <q-btn flat dense id="qz-print-modal-link" icon="print" type="button" :class="readyStyleBtn"
+        @click.stop="(showPrinterDialog = true)">
+        <q-tooltip>打印选项</q-tooltip>
+        <q-dialog v-model="showPrinterDialog" persistent transition-show="scale" transition-hide="scale">
+        <q-card class="bg-gray-1 ">
+            <q-card-section>
+                <div class="row items-center no-wrap">
+                    <div class="col">
+                        <div class="text-h4">QZ打印选项</div>
+                    </div>
+                    <div class="col-auto">
+                        <q-btn color="grey-7" size="sm" round outline icon="close" v-close-popup></q-btn>
+                    </div>
+                </div>
+            </q-card-section>
+            <q-card-section>
+                <q-card>
+                    <q-card-section>
+                    <div id="qz-connection" class="row">
+                        <div class="col-xs-6">
+                            <div class="text-h5" :class="connectionClass">{{connectionState}}<span v-if="qzVersion"
+                                    class="text-grey text-h6"> ver {{qzVersion}} ({{currentHost}})</span>
+                            </div>
+                        </div>
+                        <div class="col-xs-6 text-right">
+                            <q-btn-dropdown v-if="connectionState !== '已连接'" 
+                                split
+                                size="sm" color="primary" 
+                                label="连接"
+                                auto-close
+                                @click="startConnection"
+                            >
+                                <q-list>
+                                    <q-item
+                                        clickable
+                                        v-ripple dense
+                                        :active="currentHost === 'localhost'"
+                                        @click="currentHost = 'localhost'"
+                                        active-class="bg-amber text-white"
+                                    >
+                                        <q-item-section>本地</q-item-section>
+                                    </q-item>
+                                    <q-item v-for="host in hostList" :key="host.value"
+                                        clickable
+                                        v-ripple dense
+                                        :active="currentHost === host.value"
+                                        @click="currentHost = host.value"
+                                        active-class="bg-amber text-white"
+                                    >
+                                        <q-item-section>{{host.label}}</q-item-section>
+                                    </q-item>
+                                </q-list>
+                            </q-btn-dropdown>
+                            <q-btn v-if="connectionState === '已连接'" size="sm" color="warning" @click="endConnection()">断开</q-btn>
+                            <q-btn v-if="connectionState === '断开' || connectionState === '错误'" size="sm" color="info" @click="launchQZ()">启动插件</q-btn>
+                        </div>
+                    </div>
+                    </q-card-section>
+                    <q-separator></q-separator>
+                    <q-card-section>
+                        <div class="row items-center no-wrap">
+                                <q-chip  color="primary" text-color="white"  dense size="md" class="q-my-xs" :removable="!!(currentPrinter && currentPrinter.length)" @remove="setPrinter(null)">主：{{currentPrinter||"未设置"}}</q-chip>
+                                <q-chip  color="teal" text-color="white"  dense size="md" class="q-my-xs" :removable="!!(currentLabelPrinter && currentLabelPrinter.length)" @remove="setLabelPrinter(null)">标签：{{currentLabelPrinter||"未设置"}}</q-chip>
+                                <q-btn size="sm" dense icon="search" @click="findPrinters()"></q-btn>
+                        </div>
+                       
+                        <div class="row">
+                            <div v-for="printerName in printerList" class="col-xs-6">
+                                <div class="row items-center">
+                                    <div class="col-xs-8">
+                                        {{printerName}}
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <q-btn v-if="currentPrinter !== printerName" size="sm" dense @click="setPrinter(printerName)">主</q-btn>
+                                        <q-btn v-if="currentPrinter === printerName" size="sm" dense color="primary" @click="setPrinter(null)">主</q-btn>
+                                        <q-btn v-if="currentLabelPrinter !== printerName" size="sm" dense @click="setLabelPrinter(printerName)">标签</q-btn>
+                                        <q-btn v-if="currentLabelPrinter === printerName" size="sm" dense color="primary" @click="setLabelPrinter(null)">标签</q-btn>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </q-card-section>
+                    <q-separator></q-separator>
+                    <q-card-section>
+                    <div class="row" style="min-width:500px;">
+                        <div class="col-xs-6">
+                            <div class="text-h5">主打印选项</div>
+                            <q-select filled emit-value map-options stack-label v-model="mainOptions.orientation" :options="orientationOptions" label="方向"></q-select>
+                            <q-select filled emit-value map-options stack-label v-model="mainOptions.colorType" :options="colorOptions" label="色彩"></q-select>
+                            <div>
+                                <q-input stack-label label="份数" v-model.number="mainOptions.copies" type="number" filled/>
+                            </div>
+                            <q-checkbox label="缩放" v-model="mainOptions.scaleContent"></q-checkbox>
+                            <q-checkbox label="光栅化" v-model="mainOptions.rasterize"></q-checkbox>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="text-h5">标签机选项</div>
+                            <q-select filled emit-value map-options stack-label v-model="labelOptions.orientation" :options="orientationOptions" label="方向"></q-select>
+                            <q-select filled emit-value map-options stack-label v-model="labelOptions.colorType" :options="colorOptions" label="色彩"></q-select>
+                            <div>
+                                <q-input stack-label label="份数" v-model.number="labelOptions.copies" type="number" filled/>
+                            </div>
+                            <q-checkbox label="缩放" v-model="labelOptions.scaleContent"></q-checkbox>
+                            <q-checkbox label="光栅化" v-model="labelOptions.rasterize"></q-checkbox>
+                        </div>
+                    </div>
+                    </q-card-section>
+                </qcard>
+            </q-card-section>
+        </q-card>
+        </q-dialog>
+    </q-btn>
+</template>
+<script>
+    module.exports = {
+        name: 'QzComponent',
+        data: function() { return { connectionState:'断开', connectionClass:'text-grey', qzVersion:null, currentHost: null,
+                currentPrinter:null, currentLabelPrinter:null, printerList:[], hostList:['172.29.5.110'],
+                mainOptions:{ orientation:"", colorType:"color", scaleContent:true, rasterize:false, copies: 1 },
+                labelOptions:{ orientation:"", colorType:"blackwhite", scaleContent:false, rasterize:false, copies: 2 },
+                showPrinterDialog: false,
+                orientationOptions: [
+                    {label:'默认', value:''},
+                    {label:'纵向', value:'portrait'},
+                    {label:'横向', value:'landscape'},
+                    {label:'横向(反)', value:'reverse-landscape'},
+                ],
+                colorOptions: [
+                    {label:'默认', value:''},
+                    {label:'彩色', value:'color'},
+                    {label:'灰度', value:'grayscale'},
+                    {label:'黑白', value:'blackwhite'},
+                ]
+            } },
+        methods: {
+            findPrinters: function() {
+                var vm = this;
+                qz.printers.find().then(function(data) {
+                    if (moqui.isArray(data)) {
+                        var labelKeywords = ["label", "zebra", "sato", "dymo", "tsc"];
+                        vm.printerList = data;
+                        for (var i = 0; i < data.length; i++) {
+                            var printerName = data[i]; var pnLower = printerName.toLowerCase(); var hasLabelKw = false;
+                            for (var j = 0; j < labelKeywords.length; j++) { if (pnLower.indexOf(labelKeywords[j]) !== -1) { hasLabelKw = true; break; } }
+                            if (!hasLabelKw && !vm.currentPrinter) vm.setPrinter(printerName);
+                            if (hasLabelKw && !vm.currentLabelPrinter) vm.setLabelPrinter(printerName);
+                        }
+                    }
+                }).catch(moqui.showQzError);
+            },
+            setHost: function(host) {
+                $.ajax({ type:'POST', url:(this.$root.appRootPath + '/apps/setPreference'), error:moqui.handleAjaxError,
+                    data:{ moquiSessionToken:this.$root.moquiSessionToken, preferenceKey:'qz.printer.host.active', preferenceValue:host } });
+            },
+            setPrinter: function(printerName) {
+                this.currentPrinter = printerName;
+                $.ajax({ type:'POST', url:(this.$root.appRootPath + '/apps/setPreference'), error:moqui.handleAjaxError,
+                    data:{ moquiSessionToken:this.$root.moquiSessionToken, preferenceKey:'qz.printer.main.active', preferenceValue:printerName } });
+            },
+            setLabelPrinter: function(printerName) {
+                this.currentLabelPrinter = printerName;
+                $.ajax({ type:'POST', url:(this.$root.appRootPath + '/apps/setPreference'), error:moqui.handleAjaxError,
+                    data:{ moquiSessionToken:this.$root.moquiSessionToken, preferenceKey:'qz.printer.label.active', preferenceValue:printerName } });
+            },
+            handleConnectionError: function(err) {
+                this.connectionState = "错误"; this.connectionClass = 'text-negative';
+                if (err.target !== undefined) {
+                    if (err.target.readyState >= 2) { //if CLOSING or CLOSED
+                        moqui.notifyMessages("到QZ Tray的连接已断开。 ")
+                    } else {
+                        moqui.notifyMessages(null, "QZ Tray的连接出现错误，详细信息请查看日志。")
+                        console.error(err);
+                    }
+                } else {
+                    moqui.notifyMessages(null, err + '');
+                }
+            },
+            launchQZ: function () {
+                if (!qz.websocket.isActive()) {
+                    window.location.assign("qz:launch");
+                    this.startConnection();
+                }
+            },
+            startConnection: function () {
+                if (!qz.websocket.isActive()) {
+                    var vm = this;
+                    this.connectionState = "连接中..."; this.connectionClass = 'text-info';
+                    // Retry 5 times, pausing 1 second between each attempt
+                    qz.websocket.connect({host: vm.currentHost, retries: 5, delay: 1 }).then(function() {
+                        vm.connectionState = "已连接"; vm.connectionClass = 'text-success';
+                        qz.api.getVersion().then(function(data) { vm.qzVersion = data; }).catch(moqui.showQzError);
+                    }).catch(this.handleConnectionError);
+                } else {
+                    this.connectionState = "已连接"; this.connectionClass = 'text-success';
+                }
+            },
+            endConnection: function () {
+                if (qz.websocket.isActive()) {
+                    var vm = this;
+                    return qz.websocket.disconnect().then(function() {
+                        vm.connectionState = "断开"; vm.connectionClass = 'text-grey';
+                        vm.qzVersion = null;
+                    }).catch(this.handleConnectionError);
+                } else {
+                    this.connectionState = "断开"; this.connectionClass = 'text-grey';
+                    return Promise.resolve();
+                }
+            }
+        },
+        computed: {
+            isMainReady: function () { return this.connectionState === '已连接' && this.currentPrinter; },
+            isLabelReady: function () { return this.connectionState === '已连接' && this.currentLabelPrinter; },
+            readyStyleBtn: function () { return this.connectionState === '已连接' ? (this.currentPrinter ? (this.currentLabelPrinter ? "text-success" : "text-primary") : (this.currentLabelPrinter ? "text-info" : "text-warning")) : "text-negative"; }
+        },
+        mounted: function() {
+            var vm = this;
+            qz.security.setCertificatePromise(function(resolve, reject) {
+                $.ajax(vm.$root.appRootPath + "/cs/qz-tray/digital-certificate.txt").then(resolve, reject);
+                //Alternate method: resolve(); OR resolve("---...---");
+            });
+            qz.security.setSignaturePromise(function(toSign) { return function(resolve, reject) {
+                // NOTE: using inline function that calls resolve() instead of using reject method, otherwise won't even show user warning and allow print/etc
+                $.ajax(vm.$root.appRootPath + '/apps/qzSign?message='+ toSign).then(resolve, function() { resolve(); });
+                // Alternate method - unsigned: resolve();
+            }; });
+
+            // AJAX call get preferences: qz.printer.main.active, qz.printer.label.active
+            $.ajax({ type:'GET', url:(this.$root.appRootPath + '/apps/getPreferences'), error:moqui.handleAjaxError,
+                data:{ keyRegexp:'qz\\.print.*' }, dataType:"json", success: function(prefMap) {
+                    var mainPrinter = prefMap["qz.printer.main.active"];
+                    if (mainPrinter && mainPrinter.length) vm.currentPrinter = mainPrinter;
+                    var labelPrinter = prefMap["qz.printer.label.active"];
+                    if (labelPrinter && labelPrinter.length) vm.currentLabelPrinter = labelPrinter;
+                    var mainOptionsStr = prefMap["qz.printer.main.options"];
+                    if (mainOptionsStr && mainOptionsStr.length) vm.mainOptions = JSON.parse(mainOptionsStr);
+                    var labelOptionsStr = prefMap["qz.printer.label.options"];
+                    if (labelOptionsStr && labelOptionsStr.length) vm.labelOptions = JSON.parse(labelOptionsStr);
+                    var host = prefMap["qz.printer.host.active"];
+                    if (host && host.length) {
+                        vm.currentHost = host;
+                    }  else {
+                        vm.currentHost = 'localhost';
+                    }
+
+                    vm.$watch('currentHost', function(newHost, oldHost) {
+                        if (newHost !== oldHost) {
+                            var vm = this;
+                            vm.setHost(newHost);
+                            vm.endConnection().then(function() {
+                                vm.startConnection();
+                            });
+                        }
+                    });
+                    vm.$watch('mainOptions', function(newOptions, oldOptions) {
+                                $.ajax({ type:'POST', url:(this.$root.appRootPath + '/apps/setPreference'), error:moqui.handleAjaxError,
+                                    data:{ moquiSessionToken:this.$root.moquiSessionToken, preferenceKey:'qz.printer.main.options', preferenceValue:JSON.stringify(newOptions) } });
+                            }, {deep: true});
+                    vm.$watch('labelOptions', function(newOptions, oldOptions) {
+                                $.ajax({ type:'POST', url:(this.$root.appRootPath + '/apps/setPreference'), error:moqui.handleAjaxError,
+                                    data:{ moquiSessionToken:this.$root.moquiSessionToken, preferenceKey:'qz.printer.label.options', preferenceValue:JSON.stringify(newOptions) } });
+                            }, {deep: true});
+                    vm.$watch('connectionState', function(newV, oldV) {
+                        if (newV == '已连接') {
+                            vm.$root.$emit('qz-ready', true);
+                        } else {
+                            vm.$root.$emit('qz-ready', false);
+                        }
+                    });
+                    vm.startConnection();
+                } });
+            // AJAX call get printer List
+            $.ajax({ type:'GET', url:(this.$root.appRootPath + '/capps/getQZHosts'), error:moqui.handleAjaxError,
+                dataType:"json", success: function(data) {
+                    vm.hostList = data;
+                } });
+            $(document).on('focusin.ime', '.ime-disable', function(evt) {
+                if (qz.websocket.isActive()) {
+                    try{qz.ime.control(false, $(evt.currentTarget).is('.ime-caps'));} catch(e){};
+                }
+            });
+            $(document).on('focusout.ime', '.ime-disable', function(evt) {
+                if (qz.websocket.isActive()) {
+                    if ($(evt.relatedTarget).closest('.ime-disable').length == 0) {
+                        try{qz.ime.restore();} catch(e){};
+                    }
+                }
+            });
+        },
+        beforeDestroy: function() {
+            $(document).off('focusin.ime');
+            $(document).off('focusout.ime');
+        }
+    }
+</script>

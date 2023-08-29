@@ -5,4 +5,10 @@
         <authz artifactAuthzId="CUSTOM_APP_ADM" userGroupId="ADMIN"  authzTypeEnumId="AUTHZT_ALWAYS" authzActionEnumId="AUTHZA_ALL">
             <filters entityFilterSetId="MANTLE_ACTIVE_ORG"/></authz>
     </artifactGroups>
+
+    <artifactGroups artifactGroupId="CUSTOM_APP_ALL_USERS" description="Custom App All User">
+        <artifacts artifactName="component://yao-quasar/screen/capps.xml/getQZHosts" artifactTypeEnumId="AT_XML_SCREEN_TRANS" inheritAuthz="Y"/>
+        <authz artifactAuthzId="CUSTOM_APP_ALL_USERS" userGroupId="ALL_USERS" authzTypeEnumId="AUTHZT_ALLOW" authzActionEnumId="AUTHZA_ALL"></authz>
+    </artifactGroups>
+
 </entity-facade-xml>
