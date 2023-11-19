@@ -368,8 +368,11 @@ Vue.component('m-container-box', {
             '<slot name="header"></slot>' +
             '<q-space></q-space>' +
             '<slot name="toolbar"></slot>' +
+'  <q-btn color="grey"  round flat dense :icon="isBodyOpen ? \'keyboard_arrow_up\' : \'keyboard_arrow_down\'" @click="toggleBody" />' +            
         '</q-card-actions>' +
+'  <div v-show="isBodyOpen">' +
         '<q-card-section :class="{in:isBodyOpen}"><slot></slot></q-card-section>' +
+'  </div>' +
     '</q-card>',
     methods: { toggleBody: function() { this.isBodyOpen = !this.isBodyOpen; } }
 });
@@ -1032,7 +1035,7 @@ Vue.component('m-form-paginate', {
     name: "mFormPaginate",
     props: { paginate:Object, formList:Object },
     template:
-    '<div v-if="paginate" class="q-pagination row no-wrap items-center">' +
+    '<div v-if="paginate &amp;&amp; paginate.count > 1" class="q-pagination row no-wrap items-center">' +
         '<template v-if="paginate.pageIndex > 0">' +
             '<q-btn dense flat no-caps @click.prevent="setIndex(0)" icon="skip_previous"></q-btn>' +
             '<q-btn dense flat no-caps @click.prevent="setIndex(paginate.pageIndex-1)" icon="fast_rewind"></q-btn></template>' +
@@ -1161,8 +1164,13 @@ Vue.component('m-form-column-config', {
         generalFormFields: function() {
             var fields = this.$refs.mForm.fields;
             fields.formLocation = this.formLocation;
-            if (this.findParameters) for (var curKey in Object.keys(this.findParameters))
+            if (this.findParameters) {
+                var findParmKeys = Object.keys(this.findParameters);
+                for (var keyIdx = 0; keyIdx < findParmKeys.length; keyIdx++) {
+                    var curKey = findParmKeys[keyIdx];
                 fields[curKey] = this.findParameters[curKey];
+}
+            }
             console.log("Save column config " + this.formLocation + " Window Width " + window.innerWidth + " Quasar Platform: " + JSON.stringify(Quasar.Platform.is));
             if (window.innerWidth <= 600 || Quasar.Platform.is.mobile) fields._uiType = 'mobile';
         }
@@ -1262,7 +1270,7 @@ Vue.component('m-date-time', {
     // TODO: add back @focus="focusDate" @blur="blurDate" IFF needed given different mask/etc behavior
     // --（撤销）YAO Modified max-width to 13rem;
     '<q-input dense outlined stack-label :label="label" v-bind:value="value" v-on:input="$emit(\'input\', $event)" :rules="rules"' +
-            ' :mask="inputMask" fill-mask :id="id" :name="name" :form="form" :disable="disable" :size="sizeVal">' +
+            ' :mask="inputMask" fill-mask :id="id" :name="name" :form="form" :disable="disable" :size="sizeVal" style="max-width:max-content;">' +
         '<template v-slot:prepend v-if="type==\'date\' || type==\'date-time\' || !type">' +
             '<q-icon name="event" class="cursor-pointer">' +
                 '<q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">' +
@@ -1525,7 +1533,7 @@ Vue.component('m-drop-down', {
                 ' dense outlined options-dense use-input :hide-selected="multiple" :name="name" :id="id" :form="form"' +
                 ' input-debounce="500" @filter="filterFn" :clearable="allowEmpty||multiple" :disable="disable"' +
                 ' :multiple="multiple" :emit-value="!onSelectGoTo" map-options behavior="menu"' +
-                ' :rules="[val => allowEmpty||multiple||(val&&val.length)||\'请选择一个选项\']"' +
+                ' :rules="[val => allowEmpty||multiple||val===\'\'||(val&&val.length)||\'请选择一个选项\']"' +
                 ' stack-label :label="label" :loading="loading" :options="curOptions">' +
             '<q-tooltip v-if="tooltip">{{tooltip}}</q-tooltip>' +
             '<template v-slot:no-option><q-item><q-item-section class="text-grey">没有结果</q-item-section></q-item></template>' +
@@ -1710,7 +1718,7 @@ Vue.component('m-drop-down', {
 
             // console.warn("curOptions updated " + this.name + " allowEmpty " + this.allowEmpty + " value '" + this.value + "' " + " isInNewOptions " + isInNewOptions + ": " + JSON.stringify(options));
             if (!isInNewOptions) {
-                if (!this.allowEmpty && !this.multiple && options && options.length && options[0].value && (!this.requiredManualSelect || options.length === 1)) {
+                if (!this.allowEmpty && !this.multiple && options && options.length && options[0].value && (!this.requiredManualSelect || (!this.submitOnSelect && options.length === 1))) {
                     // simulate normal select behavior with no empty option (not allowEmpty) where first value is selected by default
                     // console.warn("checkCurrentValue setting " + this.name + " to " + options[0].value + " options " + options.length);
                     this.$emit('input', options[0].value);
@@ -1755,6 +1763,7 @@ Vue.component('m-drop-down', {
     },
     mounted: function() {
         // TODO: handle combo somehow: if (this.combo) { opts.tags = true; opts.tokenSeparators = [',',' ']; }
+
         if (this.serverSearch) {
             if (!this.optionsUrl) console.error("m-drop-down in form " + this.form + " has no options-url but has server-search=true");
         }
@@ -1779,7 +1788,7 @@ Vue.component('m-drop-down', {
             }
         }
         // simulate normal select behavior with no empty option (not allowEmpty) where first value is selected by default - but only do for 1 option to force user to think and choose from multiple
-        if (!this.multiple && !this.allowEmpty && (!this.value || !this.value.length) && this.options && this.options.length && (!this.requiredManualSelect || this.options.length === 1)) {
+        if (!this.multiple && !this.allowEmpty && (!this.value || !this.value.length) && this.options && this.options.length && (!this.requiredManualSelect || (!this.submitOnSelect && options.length === 1))) {
             this.$emit('input', this.options[0].value);
         }
     }
@@ -2447,6 +2456,14 @@ moqui.webrootVue = new Vue({
             if (resp.loggedIn) {
                 this.reLoginPostLogin();
             }
+},
+        qLayoutMinHeight: function(offset) {
+            // "offset" is a Number (pixels) that refers to the total
+            // height of header + footer that occupies on screen,
+            // based on the QLayout "view" prop configuration
+
+            // this is actually what the default style-fn does in Quasar
+            return { minHeight: offset ? `calc(100vh - ${offset}px)` : '100vh' }
         }
     },
     watch: {
