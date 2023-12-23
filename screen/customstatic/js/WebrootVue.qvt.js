@@ -2757,3 +2757,44 @@ Vue.component('m-luckysheet', {
         }
     },
 });
+
+Vue.component('m-debounce-btn', {
+    name: 'mDebounceBtn',
+    template: `<template>
+                <q-btn
+                    :disabled="isButtonDisabled || disabled"
+                    v-bind="$attrs"
+                    v-on="$listeners"
+                    @click="handleClick"
+                >
+                    <slot></slot>
+                </q-btn>
+                </template>`,
+    data: function() {
+        return {
+        isButtonDisabled: false,
+        };
+    },
+    computed: {
+        disabled: function() {
+        return this.$attrs.disabled;
+        }
+    },
+    methods: {
+        handleClick: function() {
+        if (!this.disabled) {
+            this.isButtonDisabled = true;
+            var vm = this;
+
+            setTimeout(function() {
+            vm.isButtonDisabled = false;
+            }, 2000);
+
+            if (this.$listeners.click) {
+            this.$listeners.click.apply(null, arguments);
+            }
+        }
+        }
+    },
+    inheritAttrs: false
+});
