@@ -2760,16 +2760,14 @@ Vue.component('m-luckysheet', {
 
 Vue.component('m-debounce-btn', {
     name: 'mDebounceBtn',
-    template: `<template>
-                <q-btn
+    template: `<q-btn
                     :disabled="isButtonDisabled || disabled"
                     v-bind="$attrs"
                     v-on="$listeners"
                     @click="handleClick"
                 >
                     <slot></slot>
-                </q-btn>
-                </template>`,
+                </q-btn>`,
     data: function() {
         return {
         isButtonDisabled: false,
