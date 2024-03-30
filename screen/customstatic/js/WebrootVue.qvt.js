@@ -2763,7 +2763,7 @@ Vue.component('m-debounce-btn', {
     template: `<q-btn
                     :disabled="isButtonDisabled || disabled"
                     v-bind="$attrs"
-                    v-on="$listeners"
+                    v-on="listenersWithNoClick"
                     @click="handleClick"
                 >
                     <slot></slot>
@@ -2776,6 +2776,11 @@ Vue.component('m-debounce-btn', {
     computed: {
         disabled: function() {
         return this.$attrs.disabled;
+        },
+        listenersWithNoClick: function() {
+            let listeners = {...this.$listeners};
+            delete listeners.click; // Remove the click listener, if any, to prevent duplication
+            return listeners;
         }
     },
     methods: {
