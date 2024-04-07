@@ -2785,6 +2785,10 @@ Vue.component('m-luckysheet', {
             this.$q.sessionStorage.remove('LUCKYSHEET_DATA');
         }
     },
+    created: function() {
+        this.$t('数据恢复');
+        this.$t('发现未保存的数据，需要恢复吗？');
+    },
     mounted: function() {
         var vm = this;
         var formEl = this.$parent.$el;
@@ -2799,7 +2803,7 @@ Vue.component('m-luckysheet', {
                 if (err) return;
                 var options = Object.assign({}, vm.config, {
                     container: vm.id, //luckysheet容器,
-                    lang: 'zh',
+                    lang: vm.$root.locale == 'zh-cn' ? 'zh': 'en',
                     showtoolbar: false,
                     showinfobar: false,
                     showsheetbar: false,
@@ -2814,8 +2818,8 @@ Vue.component('m-luckysheet', {
                             vm.updateInput();
                             if (vm.recoveryData) {
                                 vm.$q.dialog({
-                                    title: '数据恢复',
-                                    message: '发现未保存的数据，需要恢复吗？',
+                                    title: vm.$t('数据恢复'),
+                                    message: vm.$t('发现未保存的数据，需要恢复吗？'),
                                     cancel: true,
                                     persistent: true
                                 }).onOk(() => {
