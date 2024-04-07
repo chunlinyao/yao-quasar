@@ -4,7 +4,7 @@
 Vue.prototype.moqui = moqui;
 Vue.prototype.moment = moment;
 Vue.prototype.window = window;
-Quasar.lang.set(Quasar.lang.zhHans);
+// Quasar.lang.set(Quasar.lang.zhHans);
 
 moqui.urlExtensions = { js:'qjs', vue:'qvue', vuet:'qvt' }
 
@@ -2153,8 +2153,120 @@ Vue.component('m-menu-item-content', {
     '</div></div>'
 });
 
+var i18n;
+const {i18nmissing, async_t, fetchTranslate} = (function() {
+    const translationCache = {};
+    const translationQueue = {};
+    let callApiPromise = null;
+    const getTranslationsByKey = function(locale, keys) {
+        return $.ajax({ type:'POST', url:((moqui.webrootVue.appRootPath || '') + '/capps/getL10nMessage'), error:moqui.handleAjaxError,
+                dataType:'json', headers:{Accept:'application/json'},
+                contentType: 'application/json;charset=utf-8',
+                data: JSON.stringify({locale: locale, keys: keys})});
+    }
+    const fetchTranslate = async (locale, key) => {
+        const cachedTranslation = translationCache[locale]?.[key];
 
+        if (cachedTranslation) {
+            return cachedTranslation;
+        }
+
+        // If translation not found in the cache, add to the queue
+        if (!translationQueue[locale]) {
+            translationQueue[locale] = [];
+        }
+
+        if (translationQueue[locale].indexOf(key) < 0) {
+            translationQueue[locale].push(key);
+        } 
+
+        do {
+            // Use a microtask to ensure multiple calls are batched
+            await new Promise(resolve => setTimeout(resolve, 0));
+            // Check if translation has been loaded by another call in the batch
+            if (translationCache[locale]?.[key]) {
+                return translationCache[locale][key];
+            }
+
+            // Fetch translations for the entire batch
+            const batchKeys = translationQueue[locale];
+            if (!callApiPromise && batchKeys && batchKeys.length > 0) {
+                // Clear the queue for the language code
+                delete translationQueue[locale];
+                callApiPromise = getTranslationsByKey(locale, batchKeys);
+            }
+            if (callApiPromise) {
+                const response = await callApiPromise;
+                if (callApiPromise) {
+                    const translations = response;
+                    // Update cache for each key in the batch
+                    if (!translationCache[locale]) {
+                        translationCache[locale] = {};
+                    }
+                    // translations.forEach((trans) => {
+                    //     translationCache[locale][trans.key] = trans.value;
+                    // });
+                    const translationsMap = new Map(Object.entries(translations));
+                    translationsMap.forEach((value, transKey) => {
+                        translationCache[locale][transKey] = value;
+                    });
+                    callApiPromise = null;
+                }
+            }
+        } while (!translationCache[locale]?.[key])
+        
+        return translationCache[locale]?.[key];
+    }
+
+
+    let updateQueue = {};
+    let updateTimer = null;
+    const i18nmissing = (locale, key, vm) => {
+        fetchTranslate(locale, key).then((value) => {
+            if (value) {
+                // Add the translation to the queue instead of setting it immediately
+                updateQueue[key] = value;
+
+                // Schedule a batch update if not already scheduled
+                if (!updateTimer) {
+                    updateTimer = setTimeout(() => {
+                        i18n.setLocaleMessage(locale, {...i18n.getLocaleMessage(locale), ...updateQueue});
+                        updateQueue = {}; // Clear the queue after updating
+                        updateTimer = null; // Reset the timer
+                    }, 0); // Adjust the delay as needed, here it's set to 500ms
+                }
+            }
+        });
+        return key;
+    };
+
+    const async_t = async (key, args) => {
+        let locale = i18n.locale;
+        let value = await fetchTranslate(locale, key);
+        return formatString(value, args);
+    }
+    let regTemplate = new RegExp(/{(\d+)}/g)
+    function formatString(template, values) {
+        return template.replace(regTemplate, (match, idx) => { 
+            return typeof values[idx] != 'undefined'
+                ? values[idx]
+                : match
+            ;
+        });
+    }
+
+    return {
+        i18nmissing,
+        fetchTranslate,
+        async_t
+    }
+})();
+
+i18n = new VueI18n({locale:'zh',
+missing: i18nmissing,
+silentTranslationWarn: true});
 moqui.webrootVue = new Vue({
+    i18n: i18n,
     el: '#apps-root',
     data: { basePath:"", linkBasePath:"", currentPathList:[], extraPathList:[], currentParameters:{}, bodyParameters:null,
         activeSubscreens:[], navMenuList:[], navHistoryList:[], navPlugins:[], accountPlugins:[], notifyHistoryList:[],
@@ -2582,6 +2694,13 @@ moqui.webrootVue = new Vue({
         var accountPluginUrlList = [];
         $('.confAccountPluginUrl').each(function(idx, el) { accountPluginUrlList.push($(el).val()); });
         this.addAccountPluginsWait(accountPluginUrlList, 0);
+
+        i18n.locale = this.locale;
+        if (this.locale.startsWith('zh')) {
+            Quasar.lang.set(Quasar.lang.zhHans);
+        } else {
+            Quasar.lang.set(Quasar.lang.enUs);
+        }
     },
     mounted: function() {
         var jqEl = $(this.$el);

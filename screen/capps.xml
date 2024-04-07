@@ -32,7 +32,18 @@ along with this software (see the LICENSE.md file). If not, see
         </actions>
         <default-response type="none"></default-response>
     </transition>
-
+    <transition name="getL10nMessage" read-only="true" require-session-token="false">
+        <actions>
+            <log message="${locale} ${keys}" />
+            <script><![CDATA[ 
+                def l = Locale.forLanguageTag(locale)
+                def outMap = [:]
+                for (k in keys) outMap.put(k, ec.l10n.localize(k, l))
+                ec.web.sendJsonResponse(outMap)
+            ]]></script>
+        </actions>
+        <default-response type="none"></default-response>
+    </transition>
     <pre-actions>
         <set field="html_keywords" from="ec.user.getPreference('html_keywords') ?: ''"/>
         <set field="html_description" from="ec.user.getPreference('html_description') ?: ''"/>
@@ -49,10 +60,12 @@ along with this software (see the LICENSE.md file). If not, see
             html_scripts.add("/js/MoquiLib.min.js")
             // Vue JS
             footer_scripts.add("/libs/vue/vue.min.js")
+            footer_scripts.add("/cs/libs/vue/vue-i18n.js")
             // http-vue-loader
             footer_scripts.add("/js/http-vue-loader/httpVueLoader.js")
             // Quasar
             footer_scripts.add("/cs/libs/quasar/dist/quasar.umd.min.js")
+            footer_scripts.add("/cs/libs/quasar/dist/lang/en-us.umd.min.js")
             footer_scripts.add("/cs/libs/quasar/dist/lang/zh-hans.umd.min.js")
             // Webroot Quasar-Vue instance, in footer so runs after page loaded
             footer_scripts.add("/cs/js/WebrootVue.qvt.min.js")
@@ -61,10 +74,12 @@ along with this software (see the LICENSE.md file). If not, see
             html_scripts.add("/js/MoquiLib.js")
             // Vue JS
             footer_scripts.add("/libs/vue/vue.js")
+            footer_scripts.add("/cs/libs/vue/vue-i18n.js")
             // http-vue-loader
             footer_scripts.add("/js/http-vue-loader/httpVueLoader.js")
             // Quasar
             footer_scripts.add("/cs/libs/quasar/dist/quasar.umd.js")
+            footer_scripts.add("/cs/libs/quasar/dist/lang/en-us.umd.min.js")
             footer_scripts.add("/cs/libs/quasar/dist/lang/zh-hans.umd.min.js")
             // Webroot Quasar-Vue instance, in footer so runs after page loaded
             footer_scripts.add("/cs/js/WebrootVue.qvt.js")
